@@ -1,5 +1,12 @@
 
 import streamlit as st
+from RAG_engine import load_base, ask_rag
+
+st.set_page_config(
+    page_title="Government Schemes & Policies Chatbot",
+    page_icon="🇮🇳",
+    layout="centered"
+)
 
 st.markdown("""
 <style>
@@ -20,7 +27,6 @@ st.markdown("""
     color: white;
     text-align: center;
     margin-bottom: 20px;
-    box-shadow: 0 5px 18px rgba(16, 43, 80, 0.15);
 }
 
 .hero h1 {
@@ -40,7 +46,6 @@ st.markdown("""
     text-align: center;
     margin: 20px 0;
     border: 1px solid #DFE7F0;
-    box-shadow: 0 4px 14px rgba(30, 70, 110, 0.06);
 }
 
 .gov-banner h3 {
@@ -57,7 +62,6 @@ st.markdown("""
     padding: 15px;
     border-radius: 12px;
     text-align: center;
-    box-shadow: 0 4px 14px rgba(30, 70, 110, 0.06);
 }
 
 .feature h3 {
@@ -73,6 +77,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# Header
 st.markdown("""
 <div class="hero">
     <h1>Government Schemes & Policies Chatbot</h1>
@@ -80,6 +85,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# Welcome
 st.markdown("""
 <div class="gov-banner">
     <h3>🇮🇳 Welcome to Government Information Assistant</h3>
@@ -88,6 +94,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+# Features
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -117,3 +124,71 @@ with col3:
 st.markdown("<br>", unsafe_allow_html=True)
 
 st.caption("Developed by DARSHAN")
+
+# API Key
+mykey = st.secrets["GROQ_API_KEY"]
+
+# Load RAG
+@st.cache_resource
+def initiate_rag():
+    return load_base("Government_docs")
+
+try:
+    index, embed_model, chunks = initiate_rag()
+except Exception:
+    st.error("Unable to load PDF documents. Check your Government_docs folder.")
+    st.stop()
+
+# Chat History
+if "chat_hist" not in st.session_state:
+    st.session_state.chat_hist = []
+
+# Display Previous Messages
+for qa in st.session_state.chat_hist:
+    with st.chat_message(qa["role"]):
+        st.write(qa["content"])
+
+# Question Input
+question = st.chat_input("Ask about government schemes and policies...")
+
+if question:
+
+    st.session_state.chat_hist.append(
+        {"role": "user", "content": question}
+    )
+
+    with st.chat_message("user"):
+        st.write(question)
+
+    with st.chat_message("assistant"):
+        with st.spinner("Finding information from government documents..."):
+
+            try:
+                answer = ask_rag(
+                    question,
+                    embed_model,
+                    chunks,
+                    index,
+                    api_key=mykey
+                )
+
+                st.write(answer)
+
+                st.session_state.chat_hist.append(
+                    {"role": "assistant", "content": answer}
+                )
+
+            except Exception:
+                st.error("Unable to generate an answer. Please check your API key and model settings.")
+
+# Clear Chat
+if st.button("Clear Chat"):
+    st.session_state.chat_hist = []
+    st.rerun()
+
+# Footer
+st.markdown("""
+<div class="footer">
+    Government Schemes & Policies Assistant | Powered by RAG
+</div>
+""", unsafe_allow_html=True)
