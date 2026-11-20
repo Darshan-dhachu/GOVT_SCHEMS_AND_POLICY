@@ -77,6 +77,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+
 # Header
 st.markdown("""
 <div class="hero">
@@ -84,6 +85,7 @@ st.markdown("""
     <p>Your assistant for government schemes, policies, benefits and eligibility.</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 # Welcome
 st.markdown("""
@@ -93,6 +95,7 @@ st.markdown("""
     government policies and citizen benefits.</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 # Features
 col1, col2, col3 = st.columns(3)
@@ -121,66 +124,74 @@ with col3:
     </div>
     """, unsafe_allow_html=True)
 
+
 st.markdown("<br>", unsafe_allow_html=True)
 
 st.caption("Developed by DARSHAN")
 
+
 # API Key
 try:
     mykey = st.secrets["GROQ_API_KEY"]
-except Exception:
-    st.error("GROQ_API_KEY is missing. Check Streamlit Secrets.")
+except KeyError:
+    st.error("GROQ_API_KEY is missing. Please add it in Streamlit Secrets.")
     st.stop()
 
-# Load PDF Documents
+
+# Load RAG
 @st.cache_resource
 def initiate_rag():
     return load_base("Government_docs")
 
+
 try:
     with st.spinner("Reading government PDF documents..."):
+
         index, embed_model, chunks = initiate_rag()
 
-    if not chunks:
-        st.error("No readable text found in Government_docs.")
-        st.stop()
-
-    st.success("Government PDF documents loaded successfully!")
+    st.success(
+        f"{len(chunks)} document chunks loaded successfully!"
+    )
 
 except Exception as e:
+
     st.error(f"Unable to load PDF documents: {e}")
     st.stop()
 
-# Initialize Chat History
+
+# Chat History
 if "chat_hist" not in st.session_state:
     st.session_state.chat_hist = []
 
+
 # Display Previous Messages
 for qa in st.session_state.chat_hist:
+
     with st.chat_message(qa["role"]):
         st.write(qa["content"])
+
 
 # Question Input
 question = st.chat_input(
     "Ask about government schemes and policies..."
 )
 
-if question:
 
-    # Display User Question
-    with st.chat_message("user"):
-        st.write(question)
+if question:
 
     st.session_state.chat_hist.append(
         {"role": "user", "content": question}
     )
 
-    # Generate Answer
+    with st.chat_message("user"):
+        st.write(question)
+
     with st.chat_message("assistant"):
 
-        with st.spinner("Searching PDF documents and generating answer..."):
+        with st.spinner("Finding information from government documents..."):
 
             try:
+
                 answer = ask_rag(
                     question,
                     embed_model,
@@ -196,12 +207,17 @@ if question:
                 )
 
             except Exception as e:
-                st.error(f"Unable to generate answer: {e}")
+
+                st.error(f"Unable to generate an answer: {e}")
+
 
 # Clear Chat
 if st.button("Clear Chat"):
+
     st.session_state.chat_hist = []
+
     st.rerun()
+
 
 # Footer
 st.markdown("""
