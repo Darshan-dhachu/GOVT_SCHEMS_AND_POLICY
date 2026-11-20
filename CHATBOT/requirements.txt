@@ -1,0 +1,6 @@
+pip install streamlit
+pip install faiss-cpu
+pip install numpy
+pip install groq
+pip install pypdf
+pip install sentence-transformers
