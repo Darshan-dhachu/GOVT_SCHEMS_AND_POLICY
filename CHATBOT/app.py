@@ -126,20 +126,32 @@ st.markdown("<br>", unsafe_allow_html=True)
 st.caption("Developed by DARSHAN")
 
 # API Key
-mykey = st.secrets["GROQ_API_KEY"]
+try:
+    mykey = st.secrets["GROQ_API_KEY"]
+except Exception:
+    st.error("GROQ_API_KEY is missing. Check Streamlit Secrets.")
+    st.stop()
 
-# Load RAG
+# Load PDF Documents
 @st.cache_resource
 def initiate_rag():
     return load_base("Government_docs")
 
 try:
-    index, embed_model, chunks = initiate_rag()
-except Exception:
-    st.error("Unable to load PDF documents. Check your Government_docs folder.")
+    with st.spinner("Reading government PDF documents..."):
+        index, embed_model, chunks = initiate_rag()
+
+    if not chunks:
+        st.error("No readable text found in Government_docs.")
+        st.stop()
+
+    st.success("Government PDF documents loaded successfully!")
+
+except Exception as e:
+    st.error(f"Unable to load PDF documents: {e}")
     st.stop()
 
-# Chat History
+# Initialize Chat History
 if "chat_hist" not in st.session_state:
     st.session_state.chat_hist = []
 
@@ -149,19 +161,24 @@ for qa in st.session_state.chat_hist:
         st.write(qa["content"])
 
 # Question Input
-question = st.chat_input("Ask about government schemes and policies...")
+question = st.chat_input(
+    "Ask about government schemes and policies..."
+)
 
 if question:
+
+    # Display User Question
+    with st.chat_message("user"):
+        st.write(question)
 
     st.session_state.chat_hist.append(
         {"role": "user", "content": question}
     )
 
-    with st.chat_message("user"):
-        st.write(question)
-
+    # Generate Answer
     with st.chat_message("assistant"):
-        with st.spinner("Finding information from government documents..."):
+
+        with st.spinner("Searching PDF documents and generating answer..."):
 
             try:
                 answer = ask_rag(
@@ -178,8 +195,8 @@ if question:
                     {"role": "assistant", "content": answer}
                 )
 
-            except Exception:
-                st.error("Unable to generate an answer. Please check your API key and model settings.")
+            except Exception as e:
+                st.error(f"Unable to generate answer: {e}")
 
 # Clear Chat
 if st.button("Clear Chat"):
