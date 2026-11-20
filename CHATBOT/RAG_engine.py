@@ -34,7 +34,6 @@ def create_chunks(full_text, chunksize=500, overlap=100):
     while start < len(full_text):
 
         end = start + chunksize
-
         chunk = full_text[start:end]
 
         if chunk.strip():
@@ -77,15 +76,13 @@ def load_base(pdf_path="Government_docs"):
     folder_path = Path(__file__).parent / pdf_path
 
     if not folder_path.exists():
-
         raise FileNotFoundError(
             f"Folder not found: {folder_path}"
         )
 
-    pdf_files = sorted(folder_path.glob("*.pdf"))
+    pdf_files = sorted(folder_path.rglob("*.pdf"))
 
     if not pdf_files:
-
         raise FileNotFoundError(
             f"No PDF files found in {folder_path}"
         )
@@ -99,7 +96,6 @@ def load_base(pdf_path="Government_docs"):
         chunks.extend(pdf_chunks)
 
     if not chunks:
-
         raise ValueError("No readable text found in PDF documents")
 
     index, embed_model = build_vectors(chunks)
@@ -111,12 +107,13 @@ def load_base(pdf_path="Government_docs"):
 def retrieve_content(question, embed_model, chunks, index, num_chunks=3):
 
     if not question.strip():
-
         raise ValueError("Question cannot be blank")
 
     if not chunks:
-
         raise ValueError("No document chunks available")
+
+    if num_chunks < 1:
+        raise ValueError("Number of chunks must be at least 1")
 
     query_embed = embed_model.encode(
         [question],
@@ -137,7 +134,6 @@ def retrieve_content(question, embed_model, chunks, index, num_chunks=3):
     for i in vec_indices[0]:
 
         if i != -1:
-
             background += chunks[i] + "\n\n"
 
     return background
@@ -148,7 +144,6 @@ def ask_rag(question, embed_model, chunks, index, api_key,
             num_chunks=3, model_name="openai/gpt-oss-120b"):
 
     if not api_key:
-
         raise ValueError("API key missing")
 
     background = retrieve_content(
@@ -160,7 +155,6 @@ def ask_rag(question, embed_model, chunks, index, api_key,
     )
 
     if not background.strip():
-
         return "Information missing from the document."
 
     prompt = """You are a professional Government Schemes and Policies AI Assistant.
@@ -184,16 +178,13 @@ Answer:"""
     client = Groq(api_key=api_key)
 
     response = client.chat.completions.create(
-
         model=model_name,
-
         messages=[
             {
                 "role": "user",
                 "content": prompt
             }
         ],
-
         temperature=0.3
     )
 
