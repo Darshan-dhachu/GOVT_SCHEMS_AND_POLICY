@@ -53,7 +53,12 @@ h1, h2, h3, p, label, span {
     border-radius: 12px;
     text-align: center;
     border: 1px solid #D5E2EF;
-    min-height: 100px;
+    min-height: 140px;
+}
+
+.feature-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
 }
 
 .feature-card h4 {
@@ -119,6 +124,7 @@ col1, col2, col3 = st.columns(3)
 with col1:
     st.markdown("""
     <div class="feature-card">
+        <div class="feature-icon">🏛️</div>
         <h4>Government Schemes</h4>
         <p>Explore available schemes</p>
     </div>
@@ -127,6 +133,7 @@ with col1:
 with col2:
     st.markdown("""
     <div class="feature-card">
+        <div class="feature-icon">📜</div>
         <h4>Government Policies</h4>
         <p>Understand government policies</p>
     </div>
@@ -135,6 +142,7 @@ with col2:
 with col3:
     st.markdown("""
     <div class="feature-card">
+        <div class="feature-icon">🤝</div>
         <h4>Citizen Benefits</h4>
         <p>Know your available benefits</p>
     </div>
