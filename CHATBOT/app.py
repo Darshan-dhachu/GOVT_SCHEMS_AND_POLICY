@@ -124,7 +124,7 @@ col1, col2, col3 = st.columns(3)
 with col1:
     st.markdown("""
     <div class="feature-card">
-        <div class="feature-icon">🏛️</div>
+        <div class="feature-icon">🏦</div>
         <h4>Government Schemes</h4>
         <p>Explore available schemes</p>
     </div>
@@ -133,7 +133,7 @@ with col1:
 with col2:
     st.markdown("""
     <div class="feature-card">
-        <div class="feature-icon">📜</div>
+        <div class="feature-icon">⚖️</div>
         <h4>Government Policies</h4>
         <p>Understand government policies</p>
     </div>
@@ -142,7 +142,7 @@ with col2:
 with col3:
     st.markdown("""
     <div class="feature-card">
-        <div class="feature-icon">🤝</div>
+        <div class="feature-icon">🌟</div>
         <h4>Citizen Benefits</h4>
         <p>Know your available benefits</p>
     </div>
