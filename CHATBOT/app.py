@@ -6,7 +6,6 @@ st.set_page_config(
     layout="centered"
 )
 
-# Header
 st.title("Government Schemes & Policies")
 
 st.subheader("Welcome to Government Information Assistant")
@@ -28,8 +27,8 @@ cols = st.columns(3)
 for col, (icon, title, desc) in zip(cols, cards):
     with col:
         st.markdown(f"### {icon}")
-        st.markdown(f"**:blue[{title}]**")
-        st.markdown(f":blue[{desc}]")
+        st.write(f"**{title}**")
+        st.write(desc)
 
 st.caption("Developed by DARSHAN")
 
@@ -97,5 +96,4 @@ if question:
             except Exception as e:
                 st.error(f"Error generating answer: {e}")
 
-# Footer
 st.caption("Government Schemes & Policies | Powered by RAG")
