@@ -77,8 +77,16 @@ h1, h2, h3, p, label, span {
     border: 1px solid #D5E2EF;
 }
 
+/* Question Input Text Colour */
 .stChatInput textarea {
     color: #102B46 !important;
+    -webkit-text-fill-color: #102B46 !important;
+    caret-color: #102B46 !important;
+}
+
+.stChatInput textarea::placeholder {
+    color: #52677F !important;
+    opacity: 1 !important;
 }
 
 .stButton button {
