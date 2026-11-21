@@ -1,4 +1,3 @@
-
 import streamlit as st
 from RAG_engine import load_base, ask_rag
 
@@ -7,7 +6,6 @@ st.set_page_config(
     layout="centered"
 )
 
-# Main Heading
 st.title("Government Schemes & Policies")
 
 st.subheader("Welcome to Government Information Assistant")
@@ -107,6 +105,6 @@ if question:
             except Exception as e:
                 st.error(f"Error generating answer: {e}")
 
-# Footer
 st.divider()
+
 st.caption("Government Schemes & Policies")
