@@ -1,3 +1,4 @@
+
 import streamlit as st
 from RAG_engine import load_base, ask_rag
 
@@ -14,82 +15,172 @@ st.set_page_config(
 st.markdown("""
 <style>
 
+/* Main Background */
 .stApp {
-    background: linear-gradient(
-        135deg,
-        #EAF2FA,
-        #F4F7FC,
-        #E3EDF8
-    );
-    background-attachment: fixed;
+    background: #EAF1F8;
+    color: #172B4D;
 }
 
+/* Main Container */
 .block-container {
     max-width: 950px;
     padding-top: 2rem;
+    padding-bottom: 2rem;
 }
 
+/* Header */
 .hero {
     background: linear-gradient(
         120deg,
-        #102B50,
-        #1D5B91
+        #12345A,
+        #176B9A
     );
-    padding: 30px;
+    padding: 35px 25px;
     border-radius: 18px;
-    color: white;
+    color: #FFFFFF;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
+    box-shadow: 0 5px 15px rgba(20, 50, 80, 0.15);
 }
 
 .hero h1 {
-    color: white;
+    color: #FFFFFF !important;
     font-size: 30px;
+    font-weight: 700;
 }
 
 .hero p {
-    color: #DCEBFA;
+    color: #EAF5FF !important;
     font-size: 15px;
 }
 
+/* Welcome Banner */
 .gov-banner {
-    background: rgba(255, 255, 255, 0.92);
+    background: #FFFFFF;
     border-radius: 15px;
-    padding: 20px;
+    padding: 22px;
     text-align: center;
     margin: 20px 0;
-    border: 1px solid #DFE7F0;
+    border: 1px solid #D5E0EC;
 }
 
 .gov-banner h3 {
-    color: #173B65;
+    color: #12345A !important;
 }
 
 .gov-banner p {
-    color: #526579;
+    color: #40566F !important;
 }
 
+/* Feature Cards */
 .feature {
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid #E0E7EF;
-    padding: 15px;
-    border-radius: 12px;
+    background: #FFFFFF;
+    border: 1px solid #D5E0EC;
+    padding: 18px 10px;
+    border-radius: 13px;
     text-align: center;
+    box-shadow: 0 3px 10px rgba(20, 50, 80, 0.07);
 }
 
 .feature h3 {
-    color: #1D5B91;
+    color: #1479A8 !important;
 }
 
+.feature b {
+    color: #173B60 !important;
+    font-size: 14px;
+}
+
+/* All General Text */
+.stApp,
+.stApp p,
+.stApp label,
+.stApp span,
+.stApp div {
+    color: #243B53;
+}
+
+/* Caption */
+.stCaption,
+[data-testid="stCaptionContainer"] {
+    color: #526579 !important;
+}
+
+/* Chat Messages */
+[data-testid="stChatMessage"] {
+    background: #FFFFFF !important;
+    border: 1px solid #D9E3ED;
+    border-radius: 13px;
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+/* Chat Message Text */
+[data-testid="stChatMessage"] p,
+[data-testid="stChatMessage"] li,
+[data-testid="stChatMessage"] h1,
+[data-testid="stChatMessage"] h2,
+[data-testid="stChatMessage"] h3 {
+    color: #172B4D !important;
+}
+
+/* Chat Input Area */
+[data-testid="stChatInput"] {
+    background: #FFFFFF !important;
+    border: 2px solid #A9C5DA !important;
+    border-radius: 12px !important;
+}
+
+/* Chat Input Text */
+[data-testid="stChatInput"] textarea {
+    color: #172B4D !important;
+    background: #FFFFFF !important;
+    caret-color: #176B9A !important;
+}
+
+/* Input Placeholder */
+[data-testid="stChatInput"] textarea::placeholder {
+    color: #718096 !important;
+}
+
+/* Buttons */
+.stButton button {
+    background: #176B9A !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 9px !important;
+    font-weight: 600;
+    padding: 8px 20px;
+}
+
+.stButton button:hover {
+    background: #12345A !important;
+    color: #FFFFFF !important;
+}
+
+/* Success Message */
+[data-testid="stAlert"] {
+    border-radius: 10px;
+}
+
+/* Footer */
 .footer {
     text-align: center;
-    color: #718096;
+    color: #526579 !important;
     padding: 20px;
     font-size: 13px;
+    margin-top: 20px;
+    border-top: 1px solid #D5E0EC;
 }
 
-.stChatMessage {
-    border-radius: 12px;
+/* Spinner Text */
+.stSpinner p {
+    color: #173B60 !important;
+}
+
+/* Links */
+.stApp a {
+    color: #086B9B !important;
 }
 
 </style>
@@ -156,20 +247,19 @@ st.markdown("<br>", unsafe_allow_html=True)
 st.caption("Developed by DARSHAN")
 
 
-# Groq API Key
+# API Key
 try:
 
     mykey = st.secrets["GROQ_API_KEY"]
 
     if not mykey:
-
         raise ValueError("API key is empty")
 
 except Exception:
 
     st.error(
         "GROQ_API_KEY is missing. "
-        "Add your Groq API key in Streamlit Cloud Secrets."
+        "Please add your Groq API key in Streamlit Cloud Secrets."
     )
 
     st.stop()
@@ -185,7 +275,7 @@ def initiate_rag():
 try:
 
     with st.spinner(
-        "Loading government PDF documents and preparing chatbot..."
+        "Loading government PDF documents..."
     ):
 
         index, embed_model, chunks = initiate_rag()
@@ -218,7 +308,7 @@ if st.button("Clear Chat"):
     st.rerun()
 
 
-# Display Chat History
+# Display Previous Messages
 for qa in st.session_state.chat_hist:
 
     with st.chat_message(qa["role"]):
@@ -235,7 +325,6 @@ question = st.chat_input(
 # Generate Answer
 if question:
 
-    # Display User Question
     st.session_state.chat_hist.append(
         {
             "role": "user",
@@ -247,7 +336,6 @@ if question:
 
         st.markdown(question)
 
-    # Generate Assistant Answer
     with st.chat_message("assistant"):
 
         with st.spinner(
