@@ -8,9 +8,7 @@ st.set_page_config(
 
 # Main Heading
 st.title("Government Schemes & Policies")
-
 st.subheader("Welcome to Government Information Assistant")
-
 st.write(
     "Get information about Indian Government schemes, "
     "policies and citizen benefits."
@@ -18,24 +16,31 @@ st.write(
 
 st.divider()
 
-# Feature Cards
+# Government Information Boxes
 cards = [
-    ("🏦", "Government Schemes", "Explore available schemes"),
-    ("⚖️", "Government Policies", "Understand government policies"),
-    ("🌟", "Citizen Benefits", "Know your available benefits")
+    (
+        "🏦 Government Schemes",
+        "Explore various Indian Government schemes, including financial assistance, education, employment and farmer welfare schemes."
+    ),
+    (
+        "⚖️ Government Policies",
+        "Learn about Indian Government policies, rules, guidelines and initiatives for the development of citizens."
+    ),
+    (
+        "🌟 Citizen Benefits",
+        "Understand benefits such as scholarships, financial support, healthcare facilities and other citizen welfare services."
+    )
 ]
 
 cols = st.columns(3)
 
-for col, (icon, title, desc) in zip(cols, cards):
+for col, (title, description) in zip(cols, cards):
     with col:
         with st.container(border=True):
-            st.markdown(f"### {icon}")
             st.markdown(f"**{title}**")
-            st.caption(desc)
+            st.write(description)
 
 st.caption("Developed by DARSHAN")
-
 st.divider()
 
 # API Key
@@ -74,7 +79,6 @@ question = st.chat_input(
 )
 
 if question:
-
     st.session_state.messages.append(
         {"role": "user", "content": question}
     )
@@ -83,9 +87,7 @@ if question:
         st.markdown(question)
 
     with st.chat_message("assistant"):
-
         with st.spinner("Finding the answer..."):
-
             try:
                 answer = ask_rag(
                     question,
