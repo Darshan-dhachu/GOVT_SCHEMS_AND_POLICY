@@ -10,7 +10,10 @@ st.markdown("""
 <style>
 
 .stApp {
-    background: linear-gradient(135deg, #EAF1F8, #F4F7FC, #E3EDF8);
+    background:
+        radial-gradient(circle at top left, #DCEBFF 0%, transparent 40%),
+        radial-gradient(circle at bottom right, #E8DEFF 0%, transparent 40%),
+        linear-gradient(135deg, #F7F8FF, #EEF4FF, #F5F0FF);
     background-attachment: fixed;
     color: #102B46;
 }
@@ -26,11 +29,12 @@ h1, h2, h3, p, label, span {
 }
 
 .header {
-    background: linear-gradient(135deg, #D6E8F5, #B8D8EA);
+    background: linear-gradient(135deg, #DCE8FA, #C9D9F5);
     padding: 25px;
     border-radius: 15px;
     text-align: center;
     margin-bottom: 25px;
+    border: 1px solid #D1DDF0;
 }
 
 .header h1 {
@@ -45,6 +49,7 @@ h1, h2, h3, p, label, span {
     border-radius: 12px;
     margin-bottom: 20px;
     border: 1px solid #D5E2EF;
+    box-shadow: 0 4px 15px rgba(50, 70, 110, 0.06);
 }
 
 .feature-card {
@@ -54,6 +59,7 @@ h1, h2, h3, p, label, span {
     text-align: center;
     border: 1px solid #D5E2EF;
     min-height: 140px;
+    box-shadow: 0 4px 15px rgba(50, 70, 110, 0.06);
 }
 
 .feature-icon {
