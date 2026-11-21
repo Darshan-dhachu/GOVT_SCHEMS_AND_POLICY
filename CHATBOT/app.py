@@ -77,40 +77,31 @@ h1, h2, h3, p, label, span {
     border: 1px solid #D5E2EF;
 }
 
-/* Only the typed Ask input text is white */
+/* Only typed Ask input text is white */
 .stChatInput textarea {
     color: #FFFFFF !important;
     -webkit-text-fill-color: #FFFFFF !important;
     caret-color: #FFFFFF !important;
 }
 
-/* Table Visibility - Dark Blue Theme */
+/* Table: Dark Text Only, No Background */
 .stChatMessage table {
-    background-color: #17365D !important;
+    background: transparent !important;
     border-collapse: collapse !important;
     width: 100% !important;
 }
 
-.stChatMessage table th {
-    color: #FFFFFF !important;
-    background-color: #102B46 !important;
-    font-weight: bold !important;
-}
-
-.stChatMessage table td {
-    color: #FFFFFF !important;
-    background-color: #24476B !important;
-}
-
 .stChatMessage table th,
 .stChatMessage table td {
-    border: 1px solid #8FAECC !important;
+    color: #102B46 !important;
+    background: transparent !important;
+    border: 1px solid #B8C9DD !important;
     padding: 10px !important;
 }
 
 .stChatMessage table th *,
 .stChatMessage table td * {
-    color: #FFFFFF !important;
+    color: #102B46 !important;
 }
 
 .stButton button {
