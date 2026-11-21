@@ -1,9 +1,10 @@
+
 import streamlit as st
 from RAG_engine import load_base, ask_rag
 
 st.set_page_config(
     page_title="Government Schemes & Policies",
-    layout="wide"
+    layout="centered"
 )
 
 # Main Heading
@@ -31,7 +32,7 @@ for col, (icon, title, desc) in zip(cols, cards):
     with col:
         with st.container(border=True):
             st.markdown(f"### {icon}")
-            st.subheader(title)
+            st.write(f"**{title}**")
             st.write(desc)
 
 st.caption("Developed by DARSHAN")
