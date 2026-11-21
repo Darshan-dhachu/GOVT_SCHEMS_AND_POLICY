@@ -1,4 +1,3 @@
-
 import faiss
 import numpy as np
 from groq import Groq
@@ -39,6 +38,7 @@ def create_chunks(full_text, chunksize=500, overlap=100):
     while start < len(full_text):
 
         end = start + chunksize
+
         chunk = full_text[start:end]
 
         if chunk.strip():
@@ -49,16 +49,15 @@ def create_chunks(full_text, chunksize=500, overlap=100):
     return chunks
 
 
-# Embedding
-def build_vectors(
-    chunks,
-    model_name="sentence-transformers/all-MiniLM-L6-v2"
-):
+# Embedding and FAISS
+def build_vectors(chunks):
 
     if not chunks:
-        raise ValueError("Cannot create embeddings without chunks")
+        raise ValueError("No chunks available for embedding")
 
-    embed_model = SentenceTransformer(model_name)
+    embed_model = SentenceTransformer(
+        "sentence-transformers/all-MiniLM-L6-v2"
+    )
 
     embed_vectors = embed_model.encode(
         chunks,
@@ -82,53 +81,44 @@ def build_vectors(
     return index, embed_model
 
 
-# Load all PDFs, Chunk and Embedding
-def load_base(pdf_path=None):
+# Load All PDFs
+def load_base():
 
     chunks = []
 
-    # Automatically locate the CHATBOT folder
     folder_path = Path(__file__).resolve().parent
 
-    # Find all PDF files directly inside CHATBOT
-    pdf_files = sorted(folder_path.glob("*.pdf"))
+    pdf_files = sorted(
+        folder_path.glob("*.pdf")
+    )
 
     if not pdf_files:
+
         raise FileNotFoundError(
-            f"No PDF files found in CHATBOT folder: {folder_path}"
+            f"No PDF files found in {folder_path}"
         )
 
     print(f"Found {len(pdf_files)} PDF files")
 
     for pdf in pdf_files:
 
-        print(f"Loading PDF: {pdf.name}")
+        print(f"Loading: {pdf.name}")
 
-        try:
+        full_text = load_pdf(pdf)
 
-            full_text = load_pdf(pdf)
+        pdf_chunks = create_chunks(full_text)
 
-            pdf_chunks = create_chunks(full_text)
+        chunks.extend(pdf_chunks)
 
-            chunks.extend(pdf_chunks)
-
-            print(
-                f"Successfully loaded {pdf.name}: "
-                f"{len(pdf_chunks)} chunks"
-            )
-
-        except Exception as e:
-
-            raise ValueError(
-                f"Unable to process {pdf.name}: {e}"
-            ) from e
-
-    if not chunks:
-        raise ValueError(
-            "No readable text found in PDF documents"
+        print(
+            f"Loaded {pdf.name}: {len(pdf_chunks)} chunks"
         )
 
-    print(f"Total chunks created: {len(chunks)}")
+    if not chunks:
+
+        raise ValueError("No readable PDF content found")
+
+    print(f"Total chunks: {len(chunks)}")
 
     index, embed_model = build_vectors(chunks)
 
@@ -143,17 +133,12 @@ def retrieve_content(
     embed_model,
     chunks,
     index,
-    num_chunks=3
+    num_chunks=5
 ):
 
     if not question.strip():
+
         raise ValueError("Question cannot be blank")
-
-    if not chunks:
-        raise ValueError("No document chunks available")
-
-    if num_chunks < 1:
-        raise ValueError("Number of chunks must be at least 1")
 
     query_embed = embed_model.encode(
         [question],
@@ -177,6 +162,7 @@ def retrieve_content(
     for i in vec_indices[0]:
 
         if i != -1:
+
             background += chunks[i] + "\n\n"
 
     return background
@@ -189,13 +175,15 @@ def ask_rag(
     chunks,
     index,
     api_key,
-    num_chunks=3,
+    num_chunks=5,
     model_name="openai/gpt-oss-120b"
 ):
 
     if not api_key:
-        raise ValueError("Groq API key missing")
 
+        raise ValueError("Groq API key is missing")
+
+    # Retrieve relevant content
     background = retrieve_content(
         question,
         embed_model,
@@ -205,39 +193,64 @@ def ask_rag(
     )
 
     if not background.strip():
+
         return "Information missing from the document."
 
-    prompt = """You are a professional Government Schemes and Policies AI Assistant.
+    # Prompt
+    prompt = f"""
+You are a professional Government Schemes and Policies AI Assistant.
 
-Answer the user's question using only the provided document background.
+Answer the user's question using only the provided document content.
 
 Instructions:
+
 1. Give simple, clear and accurate answers.
-2. Do not invent or assume information.
-3. Explain eligibility, benefits and application procedures when available.
-4. Use pointwise answers when appropriate.
-5. If the answer is not available in the documents, say:
-"Information missing from the document."
+2. Explain the scheme in easy language.
+3. Include eligibility when available.
+4. Include benefits when available.
+5. Explain the application procedure when available.
+6. Use pointwise answers where appropriate.
+7. Do not invent information.
+8. If the answer is unavailable, say:
+Information missing from the document.
 
-Document background:
-""" + background + """
+Document Background:
 
-User question:
-""" + question + """
+{background}
 
-Answer:"""
+User Question:
 
-    client = Groq(api_key=api_key)
+{question}
 
-    response = client.chat.completions.create(
-        model=model_name,
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        temperature=0.3
-    )
+Answer:
+"""
 
-    return response.choices[0].message.content
+    try:
+
+        client = Groq(api_key=api_key)
+
+        response = client.chat.completions.create(
+            model=model_name,
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            temperature=0.3,
+            max_tokens=1500
+        )
+
+        answer = response.choices[0].message.content
+
+        if not answer:
+
+            raise ValueError("Groq returned an empty answer")
+
+        return answer
+
+    except Exception as e:
+
+        raise RuntimeError(
+            f"Groq API error: {str(e)}"
+        ) from e
