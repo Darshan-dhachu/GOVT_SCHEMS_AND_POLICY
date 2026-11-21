@@ -18,7 +18,7 @@ st.markdown("""
 }
 
 .block-container {
-    max-width: 1050px;
+    max-width: 850px;
     padding-top: 2rem;
     padding-bottom: 2rem;
 }
@@ -29,7 +29,7 @@ h1, h2, h3, p, label, .stMarkdown {
 
 .main-title {
     text-align: center;
-    font-size: 38px;
+    font-size: 32px;
     font-weight: 800;
     color: #17123F;
     margin-bottom: 12px;
@@ -40,51 +40,42 @@ h1, h2, h3, p, label, .stMarkdown {
     background: #E4D8FF;
     color: #17123F;
     padding: 12px;
-    border-radius: 30px;
-    font-size: 21px;
+    border-radius: 25px;
+    font-size: 19px;
     font-weight: 700;
     margin-bottom: 12px;
 }
 
 .description {
     text-align: center;
-    font-size: 17px;
+    font-size: 16px;
     color: #27204D;
-    margin-bottom: 25px;
+    margin-bottom: 22px;
 }
 
 .feature-card {
     background: rgba(226, 215, 255, 0.75);
     border: 2px solid #9270E8;
     border-radius: 16px;
-    min-height: 145px;
-    height: 145px;
+    height: 135px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 12px;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 .feature-icon {
-    font-size: 48px;
+    font-size: 42px;
     margin-bottom: 8px;
 }
 
 .feature-title {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 750;
     color: #17123F;
-}
-
-.developer {
-    text-align: center;
-    font-size: 17px;
-    font-style: italic;
-    color: #29205F;
-    margin-top: 20px;
-    margin-bottom: 20px;
 }
 
 hr {
@@ -156,12 +147,6 @@ for col, (logo, title) in zip(cols, cards):
             """,
             unsafe_allow_html=True
         )
-
-# Developer Name
-st.markdown(
-    '<div class="developer">Developed by DARSHAN</div>',
-    unsafe_allow_html=True
-)
 
 st.divider()
 
@@ -235,6 +220,7 @@ if question:
 
 # Footer
 st.divider()
+
 st.markdown(
     '<div style="text-align:center; color:#29205F;">Government Schemes & Policies</div>',
     unsafe_allow_html=True
