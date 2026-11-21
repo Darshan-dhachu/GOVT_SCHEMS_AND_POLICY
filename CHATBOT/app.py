@@ -32,7 +32,7 @@ for col, (icon, title, desc) in zip(cols, cards):
     with col:
         with st.container(border=True):
             st.markdown(f"### {icon}")
-            st.subheader(title)
+            st.write(f"**{title}**")
             st.write(desc)
 
 st.caption("Developed by DARSHAN")
