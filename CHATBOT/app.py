@@ -77,15 +77,15 @@ h1, h2, h3, p, label, span {
     border: 1px solid #D5E2EF;
 }
 
-/* Question Input Text Colour */
+/* Ask Input Text Colour - White */
 .stChatInput textarea {
-    color: #102B46 !important;
-    -webkit-text-fill-color: #102B46 !important;
-    caret-color: #102B46 !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    caret-color: #FFFFFF !important;
 }
 
 .stChatInput textarea::placeholder {
-    color: #52677F !important;
+    color: #FFFFFF !important;
     opacity: 1 !important;
 }
 
