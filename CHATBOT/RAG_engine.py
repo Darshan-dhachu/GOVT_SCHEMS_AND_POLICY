@@ -69,24 +69,19 @@ def build_vectors(chunks, model_name="sentence-transformers/all-MiniLM-L6-v2"):
 
 
 # Load all PDFs, Chunk and Embedding
-def load_base(pdf_path="Government_docs"):
+def load_base():
 
     chunks = []
 
-    # Correct folder path relative to this Python file
-    folder_path = Path(__file__).resolve().parent / pdf_path
+    # Locate the CHATBOT folder automatically
+    folder_path = Path(__file__).resolve().parent
 
-    if not folder_path.is_dir():
-        raise FileNotFoundError(
-            f"Government_docs folder not found: {folder_path}"
-        )
-
-    # Find all PDF files, including subfolders
-    pdf_files = sorted(folder_path.rglob("*.pdf"))
+    # Find all PDF files directly inside CHATBOT
+    pdf_files = sorted(folder_path.glob("*.pdf"))
 
     if not pdf_files:
         raise FileNotFoundError(
-            f"No PDF files found in: {folder_path}"
+            f"No PDF files found in CHATBOT folder: {folder_path}"
         )
 
     print(f"Found {len(pdf_files)} PDF files.")
@@ -108,7 +103,7 @@ def load_base(pdf_path="Government_docs"):
 
     index, embed_model = build_vectors(chunks)
 
-    print("PDF embeddings and FAISS index created successfully.")
+    print("FAISS index created successfully.")
 
     return index, embed_model, chunks
 
