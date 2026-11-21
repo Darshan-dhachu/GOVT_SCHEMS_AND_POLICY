@@ -17,16 +17,24 @@ st.write(
 
 st.divider()
 
-# Logo Boxes
+# Logo and Title Boxes
+cards = [
+    ("🏦", "Government Schemes"),
+    ("⚖️", "Government Policies"),
+    ("🌟", "Citizen Benefits")
+]
+
 cols = st.columns(3)
 
-logos = ["🏦", "⚖️", "🌟"]
-
-for col, logo in zip(cols, logos):
+for col, (logo, title) in zip(cols, cards):
     with col:
         with st.container(border=True):
             st.markdown(
                 f"<h1 style='text-align:center;'>{logo}</h1>",
+                unsafe_allow_html=True
+            )
+            st.markdown(
+                f"<p style='text-align:center; font-weight:bold;'>{title}</p>",
                 unsafe_allow_html=True
             )
 
