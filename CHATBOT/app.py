@@ -1,4 +1,3 @@
-
 import streamlit as st
 from RAG_engine import load_base, ask_rag
 
@@ -91,7 +90,7 @@ st.markdown("""
     font-size: 14px;
 }
 
-/* All General Text */
+/* General Text */
 .stApp,
 .stApp p,
 .stApp label,
@@ -158,7 +157,7 @@ st.markdown("""
     color: #FFFFFF !important;
 }
 
-/* Success Message */
+/* Alerts */
 [data-testid="stAlert"] {
     border-radius: 10px;
 }
@@ -173,7 +172,7 @@ st.markdown("""
     border-top: 1px solid #D5E0EC;
 }
 
-/* Spinner Text */
+/* Spinner */
 .stSpinner p {
     color: #173B60 !important;
 }
@@ -279,11 +278,6 @@ try:
     ):
 
         index, embed_model, chunks = initiate_rag()
-
-    st.success(
-        f"Government PDF documents loaded successfully! "
-        f"{len(chunks)} chunks created."
-    )
 
 except Exception as e:
 
