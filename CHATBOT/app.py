@@ -9,6 +9,7 @@ st.set_page_config(
 # Main Heading
 st.title("Government Schemes & Policies")
 st.subheader("Welcome to Government Information Assistant")
+
 st.write(
     "Get information about Indian Government schemes, "
     "policies and citizen benefits."
@@ -16,29 +17,18 @@ st.write(
 
 st.divider()
 
-# Government Information Boxes
-cards = [
-    (
-        "🏦 Government Schemes",
-        "Explore various Indian Government schemes, including financial assistance, education, employment and farmer welfare schemes."
-    ),
-    (
-        "⚖️ Government Policies",
-        "Learn about Indian Government policies, rules, guidelines and initiatives for the development of citizens."
-    ),
-    (
-        "🌟 Citizen Benefits",
-        "Understand benefits such as scholarships, financial support, healthcare facilities and other citizen welfare services."
-    )
-]
-
+# Logo Boxes
 cols = st.columns(3)
 
-for col, (title, description) in zip(cols, cards):
+logos = ["🏦", "⚖️", "🌟"]
+
+for col, logo in zip(cols, logos):
     with col:
         with st.container(border=True):
-            st.markdown(f"**{title}**")
-            st.write(description)
+            st.markdown(
+                f"<h1 style='text-align:center;'>{logo}</h1>",
+                unsafe_allow_html=True
+            )
 
 st.caption("Developed by DARSHAN")
 st.divider()
