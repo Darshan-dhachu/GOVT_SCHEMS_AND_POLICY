@@ -73,21 +73,27 @@ def load_base(pdf_path="Government_docs"):
 
     chunks = []
 
-    folder_path = Path(__file__).parent / pdf_path
+    # Correct folder path relative to this Python file
+    folder_path = Path(__file__).resolve().parent / pdf_path
 
-    if not folder_path.exists():
+    if not folder_path.is_dir():
         raise FileNotFoundError(
-            f"Folder not found: {folder_path}"
+            f"Government_docs folder not found: {folder_path}"
         )
 
+    # Find all PDF files, including subfolders
     pdf_files = sorted(folder_path.rglob("*.pdf"))
 
     if not pdf_files:
         raise FileNotFoundError(
-            f"No PDF files found in {folder_path}"
+            f"No PDF files found in: {folder_path}"
         )
 
+    print(f"Found {len(pdf_files)} PDF files.")
+
     for pdf in pdf_files:
+
+        print(f"Loading PDF: {pdf.name}")
 
         full_text = load_pdf(pdf)
 
@@ -98,7 +104,11 @@ def load_base(pdf_path="Government_docs"):
     if not chunks:
         raise ValueError("No readable text found in PDF documents")
 
+    print(f"Total chunks created: {len(chunks)}")
+
     index, embed_model = build_vectors(chunks)
+
+    print("PDF embeddings and FAISS index created successfully.")
 
     return index, embed_model, chunks
 
