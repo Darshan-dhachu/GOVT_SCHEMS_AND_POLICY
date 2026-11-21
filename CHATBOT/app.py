@@ -1,5 +1,5 @@
-
 import streamlit as st
+
 from RAG_engine import load_base, ask_rag
 
 
@@ -14,8 +14,14 @@ st.set_page_config(
 # Frontend Design
 st.markdown("""
 <style>
+
 .stApp {
-    background: linear-gradient(135deg, #EAF2FA, #F4F7FC, #E3EDF8);
+    background: linear-gradient(
+        135deg,
+        #EAF2FA,
+        #F4F7FC,
+        #E3EDF8
+    );
     background-attachment: fixed;
 }
 
@@ -25,7 +31,11 @@ st.markdown("""
 }
 
 .hero {
-    background: linear-gradient(120deg, #102B50, #1D5B91);
+    background: linear-gradient(
+        120deg,
+        #102B50,
+        #1D5B91
+    );
     padding: 30px;
     border-radius: 18px;
     color: white;
@@ -82,6 +92,7 @@ st.markdown("""
 .stChatMessage {
     border-radius: 12px;
 }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -90,7 +101,10 @@ st.markdown("""
 st.markdown("""
 <div class="hero">
     <h1>Government Schemes & Policies Chatbot</h1>
-    <p>Your assistant for government schemes, policies, benefits and eligibility.</p>
+    <p>
+        Your assistant for government schemes,
+        policies, benefits and eligibility.
+    </p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -99,8 +113,10 @@ st.markdown("""
 st.markdown("""
 <div class="gov-banner">
     <h3>🇮🇳 Welcome to Government Information Assistant</h3>
-    <p>Explore information about public welfare schemes,
-    government policies and citizen benefits.</p>
+    <p>
+        Explore information about public welfare schemes,
+        government policies and citizen benefits.
+    </p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -109,6 +125,7 @@ st.markdown("""
 col1, col2, col3 = st.columns(3)
 
 with col1:
+
     st.markdown("""
     <div class="feature">
         <h3>📋</h3>
@@ -117,6 +134,7 @@ with col1:
     """, unsafe_allow_html=True)
 
 with col2:
+
     st.markdown("""
     <div class="feature">
         <h3>⚖️</h3>
@@ -125,6 +143,7 @@ with col2:
     """, unsafe_allow_html=True)
 
 with col3:
+
     st.markdown("""
     <div class="feature">
         <h3>🎯</h3>
@@ -143,7 +162,7 @@ try:
 
     mykey = st.secrets["GROQ_API_KEY"]
 
-except (KeyError, FileNotFoundError):
+except Exception:
 
     st.error(
         "GROQ_API_KEY is missing. "
@@ -157,7 +176,6 @@ except (KeyError, FileNotFoundError):
 @st.cache_resource
 def initiate_rag():
 
-    # Read PDFs directly from the CHATBOT folder
     return load_base()
 
 
@@ -223,9 +241,7 @@ if question:
 
     with st.chat_message("assistant"):
 
-        with st.spinner(
-            "Finding information from government documents..."
-        ):
+        with st.spinner("Finding information from government documents..."):
 
             try:
 
