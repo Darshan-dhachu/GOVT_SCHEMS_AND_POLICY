@@ -94,10 +94,7 @@ def retrieve_content(
     for i in indices[0]:
         if i >= 0:
             relevant_chunks.append(chunks[i])
-
     return "\n\n".join(relevant_chunks)
-
-
 # Generate Answer Using Groq
 def ask_rag(
     question,
@@ -108,9 +105,7 @@ def ask_rag(
     num_chunks=5,
     model_name="openai/gpt-oss-120b"
 ):
-
     try:
-
         context = retrieve_content(
             question,
             embed_model,
@@ -118,13 +113,11 @@ def ask_rag(
             index,
             num_chunks
         )
-
         client = Groq(
             api_key=api_key,
             timeout=60.0,
             max_retries=2
         )
-
         prompt = f"""
 You are a Government Schemes and Policies
 Information Assistant for India.
@@ -141,19 +134,13 @@ Instructions:
 5. If the answer is not available in the documents,
    clearly say that the information was not found
    in the uploaded documents.
-
 Government Document Context:
-
 {context}
-
 User Question:
-
 {question}
-
 Answer:
 """
-
-        response = client.chat.completions.create(
+      response = client.chat.completions.create(
             model=model_name,
             messages=[
                 {
@@ -163,11 +150,8 @@ Answer:
             ],
             max_completion_tokens=1500
         )
-
         return response.choices[0].message.content
-
     except Exception as e:
-
         raise RuntimeError(
             f"Groq answer generation failed: {e}"
         )
