@@ -6,6 +6,7 @@ st.set_page_config(
     layout="centered"
 )
 
+# Main Heading
 st.title("Government Schemes & Policies")
 
 st.subheader("Welcome to Government Information Assistant")
@@ -32,6 +33,8 @@ for col, (icon, title, desc) in zip(cols, cards):
 
 st.caption("Developed by DARSHAN")
 
+st.divider()
+
 # API Key
 mykey = st.secrets["GROQ_API_KEY"]
 
@@ -52,11 +55,12 @@ except Exception as e:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# Clear Chat
 if st.button("Clear Chat"):
     st.session_state.messages = []
     st.rerun()
 
-# Display Chat
+# Display Previous Messages
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
@@ -67,6 +71,7 @@ question = st.chat_input(
 )
 
 if question:
+
     st.session_state.messages.append(
         {"role": "user", "content": question}
     )
@@ -75,7 +80,9 @@ if question:
         st.markdown(question)
 
     with st.chat_message("assistant"):
+
         with st.spinner("Finding the answer..."):
+
             try:
                 answer = ask_rag(
                     question,
@@ -96,4 +103,9 @@ if question:
             except Exception as e:
                 st.error(f"Error generating answer: {e}")
 
-st.caption("Government Schemes & Policies | Powered by RAG")
+# Footer
+st.divider()
+
+st.caption(
+    "Government Schemes & Policies | Powered by RAG"
+)
