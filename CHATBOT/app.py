@@ -104,7 +104,7 @@ st.markdown("""
 # Welcome Section
 st.markdown("""
 <div class="welcome">
-    <h3>🇮🇳 Welcome to Government Information Assistant</h3>
+    <h3>Welcome to Government Information Assistant</h3>
     <p>
         Get information about Indian Government schemes,
         policies and citizen benefits.
