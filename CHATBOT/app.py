@@ -84,6 +84,35 @@ h1, h2, h3, p, label, span {
     caret-color: #FFFFFF !important;
 }
 
+/* Table Visibility - Dark Blue Theme */
+.stChatMessage table {
+    background-color: #17365D !important;
+    border-collapse: collapse !important;
+    width: 100% !important;
+}
+
+.stChatMessage table th {
+    color: #FFFFFF !important;
+    background-color: #102B46 !important;
+    font-weight: bold !important;
+}
+
+.stChatMessage table td {
+    color: #FFFFFF !important;
+    background-color: #24476B !important;
+}
+
+.stChatMessage table th,
+.stChatMessage table td {
+    border: 1px solid #8FAECC !important;
+    padding: 10px !important;
+}
+
+.stChatMessage table th *,
+.stChatMessage table td * {
+    color: #FFFFFF !important;
+}
+
 .stButton button {
     background-color: #1D5D8F;
     color: white;
