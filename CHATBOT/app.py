@@ -105,7 +105,4 @@ if question:
 
 # Footer
 st.divider()
-
-st.caption(
-    "Government Schemes & Policies | Powered by RAG"
-)
+st.caption("Government Schemes & Policies")
