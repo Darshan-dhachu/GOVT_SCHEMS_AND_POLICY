@@ -8,13 +8,13 @@ st.set_page_config(
 
 # Header
 st.title("Government Schemes & Policies")
+
 st.subheader("Welcome to Government Information Assistant")
+
 st.write(
     "Get information about Indian Government schemes, "
     "policies and citizen benefits."
 )
-
-st.divider()
 
 # Feature Cards
 cards = [
@@ -27,18 +27,16 @@ cols = st.columns(3)
 
 for col, (icon, title, desc) in zip(cols, cards):
     with col:
-        with st.container(border=True):
-            st.subheader(icon)
-            st.markdown(f"**{title}**")
-            st.write(desc)
+        st.markdown(f"### {icon}")
+        st.markdown(f"**:blue[{title}]**")
+        st.markdown(f":blue[{desc}]")
 
-st.divider()
 st.caption("Developed by DARSHAN")
 
 # API Key
 mykey = st.secrets["GROQ_API_KEY"]
 
-# Load RAG
+# Load RAG only once
 @st.cache_resource
 def initiate_rag():
     return load_base()
@@ -46,6 +44,7 @@ def initiate_rag():
 try:
     with st.spinner("Loading government documents..."):
         index, embed_model, chunks = initiate_rag()
+
 except Exception as e:
     st.error(f"Unable to load PDF documents: {e}")
     st.stop()
@@ -99,5 +98,4 @@ if question:
                 st.error(f"Error generating answer: {e}")
 
 # Footer
-st.divider()
 st.caption("Government Schemes & Policies | Powered by RAG")
