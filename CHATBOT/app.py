@@ -3,7 +3,7 @@ from RAG_engine import load_base, ask_rag
 
 st.set_page_config(
     page_title="Government Schemes & Policies",
-    layout="centered"
+    layout="wide"
 )
 
 # Main Heading
@@ -16,6 +16,8 @@ st.write(
     "policies and citizen benefits."
 )
 
+st.divider()
+
 # Feature Cards
 cards = [
     ("🏦", "Government Schemes", "Explore available schemes"),
@@ -27,9 +29,10 @@ cols = st.columns(3)
 
 for col, (icon, title, desc) in zip(cols, cards):
     with col:
-        st.markdown(f"### {icon}")
-        st.write(f"**{title}**")
-        st.write(desc)
+        with st.container(border=True):
+            st.markdown(f"### {icon}")
+            st.subheader(title)
+            st.write(desc)
 
 st.caption("Developed by DARSHAN")
 
