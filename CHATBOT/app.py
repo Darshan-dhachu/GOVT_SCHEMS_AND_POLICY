@@ -1,5 +1,4 @@
 import streamlit as st
-
 from RAG_engine import load_base, ask_rag
 
 
@@ -109,7 +108,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# Welcome
+# Welcome Section
 st.markdown("""
 <div class="gov-banner">
     <h3>🇮🇳 Welcome to Government Information Assistant</h3>
@@ -157,22 +156,26 @@ st.markdown("<br>", unsafe_allow_html=True)
 st.caption("Developed by DARSHAN")
 
 
-# API Key
+# Groq API Key
 try:
 
     mykey = st.secrets["GROQ_API_KEY"]
+
+    if not mykey:
+
+        raise ValueError("API key is empty")
 
 except Exception:
 
     st.error(
         "GROQ_API_KEY is missing. "
-        "Please add it in Streamlit Cloud Secrets."
+        "Add your Groq API key in Streamlit Cloud Secrets."
     )
 
     st.stop()
 
 
-# Load RAG
+# Load RAG System
 @st.cache_resource
 def initiate_rag():
 
@@ -181,7 +184,9 @@ def initiate_rag():
 
 try:
 
-    with st.spinner("Reading government PDF documents..."):
+    with st.spinner(
+        "Loading government PDF documents and preparing chatbot..."
+    ):
 
         index, embed_model, chunks = initiate_rag()
 
@@ -192,7 +197,9 @@ try:
 
 except Exception as e:
 
-    st.error(f"Unable to load PDF documents: {e}")
+    st.error(
+        f"Unable to load PDF documents: {str(e)}"
+    )
 
     st.stop()
 
@@ -211,7 +218,7 @@ if st.button("Clear Chat"):
     st.rerun()
 
 
-# Display Previous Messages
+# Display Chat History
 for qa in st.session_state.chat_hist:
 
     with st.chat_message(qa["role"]):
@@ -228,6 +235,7 @@ question = st.chat_input(
 # Generate Answer
 if question:
 
+    # Display User Question
     st.session_state.chat_hist.append(
         {
             "role": "user",
@@ -239,18 +247,23 @@ if question:
 
         st.markdown(question)
 
+    # Generate Assistant Answer
     with st.chat_message("assistant"):
 
-        with st.spinner("Finding information from government documents..."):
+        with st.spinner(
+            "Searching documents and generating your answer..."
+        ):
 
             try:
 
                 answer = ask_rag(
-                    question,
-                    embed_model,
-                    chunks,
-                    index,
-                    api_key=mykey
+                    question=question,
+                    embed_model=embed_model,
+                    chunks=chunks,
+                    index=index,
+                    api_key=mykey,
+                    num_chunks=5,
+                    model_name="openai/gpt-oss-120b"
                 )
 
                 st.markdown(answer)
@@ -264,8 +277,20 @@ if question:
 
             except Exception as e:
 
+                error_message = str(e)
+
                 st.error(
-                    f"Unable to generate an answer: {e}"
+                    f"Unable to generate answer: {error_message}"
+                )
+
+                st.session_state.chat_hist.append(
+                    {
+                        "role": "assistant",
+                        "content": (
+                            "Sorry, I could not generate an answer. "
+                            f"Error: {error_message}"
+                        )
+                    }
                 )
 
 
