@@ -4,26 +4,50 @@ from RAG_engine import load_base, ask_rag
 
 st.set_page_config(
     page_title="Government Schemes & Policies",
-    layout="centered"
+    page_icon="🏛️",
+    layout="wide"
 )
 
-# Page Heading
-st.title("Government Schemes & Policies")
-st.subheader("Welcome to Government Information Assistant")
-st.write("Get information about Indian Government schemes, policies and citizen benefits.")
+# Header
+st.title("🏛️ Government Schemes & Policies")
+st.caption("Your information portal for Indian Government schemes and policies")
+st.divider()
 
-# Feature Cards
+# Welcome Section
+st.subheader("Welcome to Government Information Assistant")
+st.write(
+    "Explore government schemes, understand policies and discover "
+    "benefits available to citizens across India."
+)
+
+st.divider()
+
+# Information Cards
+st.subheader("Explore Information")
+
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.info("🏦 Government Schemes\n\nExplore available schemes")
+    with st.container(border=True):
+        st.subheader("🏦")
+        st.markdown("**Government Schemes**")
+        st.caption("Explore schemes and initiatives.")
 
 with col2:
-    st.info("⚖️ Government Policies\n\nUnderstand government policies")
+    with st.container(border=True):
+        st.subheader("⚖️")
+        st.markdown("**Government Policies**")
+        st.caption("Understand important policies.")
 
 with col3:
-    st.info("🌟 Citizen Benefits\n\nKnow your available benefits")
+    with st.container(border=True):
+        st.subheader("🌟")
+        st.markdown("**Citizen Benefits**")
+        st.caption("Discover available benefits.")
 
+st.divider()
+
+# Developer Information
 st.caption("Developed by DARSHAN")
 
 # API Key
@@ -41,16 +65,21 @@ except Exception as e:
     st.error(f"Unable to load PDF documents: {e}")
     st.stop()
 
-# Chat History
+# Chat Section
+st.subheader("💬 Ask Your Question")
+st.write("Ask anything about government schemes and policies.")
+
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Clear Chat
-if st.button("Clear Chat"):
-    st.session_state.messages = []
-    st.rerun()
+col1, col2 = st.columns([5, 1])
 
-# Display Previous Messages
+with col2:
+    if st.button("🗑️ Clear Chat", use_container_width=True):
+        st.session_state.messages = []
+        st.rerun()
+
+# Display Chat History
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
@@ -80,6 +109,7 @@ if question:
                 )
 
                 st.markdown(answer)
+
                 st.session_state.messages.append(
                     {"role": "assistant", "content": answer}
                 )
@@ -87,5 +117,7 @@ if question:
             except Exception as e:
                 st.error(f"Error generating answer: {e}")
 
+st.divider()
+
 # Footer
-st.caption("Government Schemes & Policies | Powered by RAG")
+st.caption("🏛️ Government Schemes & Policies | Powered by RAG")
