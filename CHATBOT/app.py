@@ -2,12 +2,16 @@
 import streamlit as st
 from RAG_engine import load_base, ask_rag
 
+
+# Page Configuration
 st.set_page_config(
     page_title="Government Schemes & Policies Chatbot",
     page_icon="🇮🇳",
     layout="centered"
 )
 
+
+# Frontend Design
 st.markdown("""
 <style>
 .stApp {
@@ -74,6 +78,10 @@ st.markdown("""
     padding: 20px;
     font-size: 13px;
 }
+
+.stChatMessage {
+    border-radius: 12px;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -132,43 +140,65 @@ st.caption("Developed by DARSHAN")
 
 # API Key
 try:
+
     mykey = st.secrets["GROQ_API_KEY"]
-except KeyError:
-    st.error("GROQ_API_KEY is missing. Please add it in Streamlit Secrets.")
+
+except (KeyError, FileNotFoundError):
+
+    st.error(
+        "GROQ_API_KEY is missing. "
+        "Please add it in Streamlit Cloud Secrets."
+    )
+
     st.stop()
 
 
 # Load RAG
 @st.cache_resource
 def initiate_rag():
-    return load_base("Government_docs")
+
+    # Read PDFs directly from the CHATBOT folder
+    return load_base()
 
 
 try:
+
     with st.spinner("Reading government PDF documents..."):
 
         index, embed_model, chunks = initiate_rag()
 
     st.success(
-        f"{len(chunks)} document chunks loaded successfully!"
+        f"Government PDF documents loaded successfully! "
+        f"{len(chunks)} chunks created."
     )
 
 except Exception as e:
 
     st.error(f"Unable to load PDF documents: {e}")
+
     st.stop()
 
 
 # Chat History
 if "chat_hist" not in st.session_state:
+
     st.session_state.chat_hist = []
+
+
+# Clear Chat
+if st.button("Clear Chat"):
+
+    st.session_state.chat_hist = []
+
+    st.rerun()
 
 
 # Display Previous Messages
 for qa in st.session_state.chat_hist:
 
     with st.chat_message(qa["role"]):
-        st.write(qa["content"])
+
+        st.markdown(qa["content"])
 
 
 # Question Input
@@ -177,18 +207,25 @@ question = st.chat_input(
 )
 
 
+# Generate Answer
 if question:
 
     st.session_state.chat_hist.append(
-        {"role": "user", "content": question}
+        {
+            "role": "user",
+            "content": question
+        }
     )
 
     with st.chat_message("user"):
-        st.write(question)
+
+        st.markdown(question)
 
     with st.chat_message("assistant"):
 
-        with st.spinner("Finding information from government documents..."):
+        with st.spinner(
+            "Finding information from government documents..."
+        ):
 
             try:
 
@@ -200,23 +237,20 @@ if question:
                     api_key=mykey
                 )
 
-                st.write(answer)
+                st.markdown(answer)
 
                 st.session_state.chat_hist.append(
-                    {"role": "assistant", "content": answer}
+                    {
+                        "role": "assistant",
+                        "content": answer
+                    }
                 )
 
             except Exception as e:
 
-                st.error(f"Unable to generate an answer: {e}")
-
-
-# Clear Chat
-if st.button("Clear Chat"):
-
-    st.session_state.chat_hist = []
-
-    st.rerun()
+                st.error(
+                    f"Unable to generate an answer: {e}"
+                )
 
 
 # Footer
