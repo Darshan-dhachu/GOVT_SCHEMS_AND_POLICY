@@ -12,12 +12,17 @@ def load_pdf(pdf_path):
 
     reader = PdfReader(str(pdf_path))
 
-    mypages = [page.extract_text() or "" for page in reader.pages]
+    mypages = [
+        page.extract_text() or ""
+        for page in reader.pages
+    ]
 
     full_text = "\n".join(mypages).strip()
 
     if not full_text:
-        raise ValueError(f"No readable text found in {pdf_path.name}")
+        raise ValueError(
+            f"No readable text found in {pdf_path.name}"
+        )
 
     return full_text
 
@@ -45,7 +50,10 @@ def create_chunks(full_text, chunksize=500, overlap=100):
 
 
 # Embedding
-def build_vectors(chunks, model_name="sentence-transformers/all-MiniLM-L6-v2"):
+def build_vectors(
+    chunks,
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
+):
 
     if not chunks:
         raise ValueError("Cannot create embeddings without chunks")
@@ -54,14 +62,20 @@ def build_vectors(chunks, model_name="sentence-transformers/all-MiniLM-L6-v2"):
 
     embed_vectors = embed_model.encode(
         chunks,
-        convert_to_numpy=True
+        convert_to_numpy=True,
+        show_progress_bar=False
     )
 
-    embed_vectors = np.asarray(embed_vectors, dtype="float32")
+    embed_vectors = np.asarray(
+        embed_vectors,
+        dtype="float32"
+    )
 
     faiss.normalize_L2(embed_vectors)
 
-    index = faiss.IndexFlatIP(embed_vectors.shape[1])
+    index = faiss.IndexFlatIP(
+        embed_vectors.shape[1]
+    )
 
     index.add(embed_vectors)
 
@@ -69,11 +83,11 @@ def build_vectors(chunks, model_name="sentence-transformers/all-MiniLM-L6-v2"):
 
 
 # Load all PDFs, Chunk and Embedding
-def load_base():
+def load_base(pdf_path=None):
 
     chunks = []
 
-    # Locate the CHATBOT folder automatically
+    # Automatically locate the CHATBOT folder
     folder_path = Path(__file__).resolve().parent
 
     # Find all PDF files directly inside CHATBOT
@@ -84,32 +98,53 @@ def load_base():
             f"No PDF files found in CHATBOT folder: {folder_path}"
         )
 
-    print(f"Found {len(pdf_files)} PDF files.")
+    print(f"Found {len(pdf_files)} PDF files")
 
     for pdf in pdf_files:
 
         print(f"Loading PDF: {pdf.name}")
 
-        full_text = load_pdf(pdf)
+        try:
 
-        pdf_chunks = create_chunks(full_text)
+            full_text = load_pdf(pdf)
 
-        chunks.extend(pdf_chunks)
+            pdf_chunks = create_chunks(full_text)
+
+            chunks.extend(pdf_chunks)
+
+            print(
+                f"Successfully loaded {pdf.name}: "
+                f"{len(pdf_chunks)} chunks"
+            )
+
+        except Exception as e:
+
+            raise ValueError(
+                f"Unable to process {pdf.name}: {e}"
+            ) from e
 
     if not chunks:
-        raise ValueError("No readable text found in PDF documents")
+        raise ValueError(
+            "No readable text found in PDF documents"
+        )
 
     print(f"Total chunks created: {len(chunks)}")
 
     index, embed_model = build_vectors(chunks)
 
-    print("FAISS index created successfully.")
+    print("FAISS index created successfully")
 
     return index, embed_model, chunks
 
 
 # Retrieve Relevant Content
-def retrieve_content(question, embed_model, chunks, index, num_chunks=3):
+def retrieve_content(
+    question,
+    embed_model,
+    chunks,
+    index,
+    num_chunks=3
+):
 
     if not question.strip():
         raise ValueError("Question cannot be blank")
@@ -125,7 +160,10 @@ def retrieve_content(question, embed_model, chunks, index, num_chunks=3):
         convert_to_numpy=True
     )
 
-    query_embed = np.asarray(query_embed, dtype="float32")
+    query_embed = np.asarray(
+        query_embed,
+        dtype="float32"
+    )
 
     faiss.normalize_L2(query_embed)
 
@@ -145,11 +183,18 @@ def retrieve_content(question, embed_model, chunks, index, num_chunks=3):
 
 
 # Generate Answer using Groq
-def ask_rag(question, embed_model, chunks, index, api_key,
-            num_chunks=3, model_name="openai/gpt-oss-120b"):
+def ask_rag(
+    question,
+    embed_model,
+    chunks,
+    index,
+    api_key,
+    num_chunks=3,
+    model_name="openai/gpt-oss-120b"
+):
 
     if not api_key:
-        raise ValueError("API key missing")
+        raise ValueError("Groq API key missing")
 
     background = retrieve_content(
         question,
@@ -166,10 +211,12 @@ def ask_rag(question, embed_model, chunks, index, api_key,
 
 Answer the user's question using only the provided document background.
 
-Give simple, clear and accurate answers.
-Do not invent or assume information.
-
-If the answer is not available in the documents, say:
+Instructions:
+1. Give simple, clear and accurate answers.
+2. Do not invent or assume information.
+3. Explain eligibility, benefits and application procedures when available.
+4. Use pointwise answers when appropriate.
+5. If the answer is not available in the documents, say:
 "Information missing from the document."
 
 Document background:
