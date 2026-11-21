@@ -30,9 +30,9 @@ cols = st.columns(3)
 for col, (icon, title, desc) in zip(cols, cards):
     with col:
         with st.container(border=True):
-            st.markdown(f"## {icon}")
-            st.subheader(title)
-            st.write(desc)
+            st.markdown(f"### {icon}")
+            st.markdown(f"**{title}**")
+            st.caption(desc)
 
 st.caption("Developed by DARSHAN")
 
@@ -108,5 +108,4 @@ if question:
 
 # Footer
 st.divider()
-
 st.caption("Government Schemes & Policies")
